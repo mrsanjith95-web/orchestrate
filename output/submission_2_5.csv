@@ -1,0 +1,4 @@
+user_id,issue_type,object_part,claim_status,severity,supporting_image_ids
+user_004,broken_part,windshield,supported,high,img_1
+user_007,broken_part,side_mirror,not_enough_information,high,none
+user_008,dent,unknown,supported,medium,img_1

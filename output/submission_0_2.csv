@@ -1,0 +1,3 @@
+user_id,issue_type,object_part,claim_status,severity,supporting_image_ids
+user_002,scratch,front_bumper,supported,medium,img_2
+user_005,dent,door,supported,high,img_1

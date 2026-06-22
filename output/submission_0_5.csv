@@ -1,0 +1,6 @@
+user_id,issue_type,object_part,claim_status,severity,supporting_image_ids
+user_002,unknown,unknown,not_enough_information,unknown,none
+user_005,unknown,unknown,not_enough_information,unknown,none
+user_004,unknown,unknown,not_enough_information,unknown,none
+user_007,unknown,unknown,not_enough_information,unknown,none
+user_008,unknown,unknown,not_enough_information,unknown,none

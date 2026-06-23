@@ -1,3 +1,4 @@
+
 import sys
 import os
 
@@ -13,11 +14,19 @@ import pandas as pd
 from agents.process_claim import process_claim
 from agents.multi_image_decision import combine_results
 
+# -------------------------
+# Page Config
+# -------------------------
+
 st.set_page_config(
     page_title="Insurance Claim Verification",
     page_icon="🔍",
     layout="wide"
 )
+
+# -------------------------
+# Title
+# -------------------------
 
 st.title("🔍 Insurance Claim Verification System")
 
@@ -45,20 +54,25 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-# Show image previews
+# -------------------------
+# Image Preview
+# -------------------------
+
 if uploaded_files:
 
     st.subheader("📷 Uploaded Images")
 
-    cols = st.columns(len(uploaded_files))
+    cols = st.columns(min(3, len(uploaded_files)))
 
     for i, file in enumerate(uploaded_files):
 
-        cols[i].image(
-            file,
-            caption=file.name,
-            use_container_width=True
-        )
+        with cols[i % len(cols)]:
+
+            st.image(
+                file,
+                caption=file.name,
+                width=200
+            )
 
 # -------------------------
 # Verify Button
@@ -74,17 +88,30 @@ if st.button("🔎 Verify Claim"):
         st.error("Please upload images.")
         st.stop()
 
+    # -------------------------
+    # Create Upload Folder
+    # -------------------------
+
+    UPLOAD_DIR = os.path.join(
+        os.path.dirname(__file__),
+        "uploads"
+    )
+
     os.makedirs(
-        "streamlit_app/uploads",
+        UPLOAD_DIR,
         exist_ok=True
     )
 
     saved_paths = []
 
+    # -------------------------
+    # Save Uploaded Images
+    # -------------------------
+
     for file in uploaded_files:
 
         save_path = os.path.join(
-            "streamlit_app/uploads",
+            UPLOAD_DIR,
             file.name
         )
 
@@ -93,10 +120,18 @@ if st.button("🔎 Verify Claim"):
 
         saved_paths.append(save_path)
 
+    # -------------------------
+    # Create Fake Dataset Row
+    # -------------------------
+
     fake_row = pd.Series({
         "user_claim": claim_text,
         "image_paths": ";".join(saved_paths)
     })
+
+    # -------------------------
+    # Run AI Analysis
+    # -------------------------
 
     with st.spinner("🤖 AI is analyzing images..."):
 
@@ -104,16 +139,33 @@ if st.button("🔎 Verify Claim"):
 
         final = combine_results(image_results)
 
+    # -------------------------
+    # Results
+    # -------------------------
+
     st.success("✅ Analysis Complete")
 
     st.markdown("---")
     st.header("📋 Analysis Result")
 
-    st.write("**Issue Type:**", final["issue_type"])
-    st.write("**Object Part:**", final["object_part"])
+    st.write(
+        "**Issue Type:**",
+        final.get("issue_type", "unknown")
+    )
 
+    st.write(
+        "**Object Part:**",
+        final.get("object_part", "unknown")
+    )
+
+    # -------------------------
     # Claim Status
-    status = final["claim_status"]
+    # -------------------------
+
+    status = final.get(
+        "claim_status",
+        "not_enough_information"
+    )
 
     if status == "supported":
         st.success(f"Claim Status: {status}")
@@ -124,8 +176,14 @@ if st.button("🔎 Verify Claim"):
     else:
         st.warning(f"Claim Status: {status}")
 
+    # -------------------------
     # Severity
-    severity = final["severity"]
+    # -------------------------
+
+    severity = final.get(
+        "severity",
+        "unknown"
+    )
 
     if severity == "high":
         st.error(f"Severity: {severity}")
@@ -136,7 +194,16 @@ if st.button("🔎 Verify Claim"):
     else:
         st.info(f"Severity: {severity}")
 
+    # -------------------------
+    # Supporting Images
+    # -------------------------
+
+    supporting = final.get(
+        "supporting_image_ids",
+        "none"
+    )
+
     st.write(
         "**Supporting Images:**",
-        final["supporting_image_ids"]
+        supporting
     )

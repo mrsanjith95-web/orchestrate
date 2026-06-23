@@ -1,4 +1,5 @@
 import json
+import os
 
 from agents.image_analyzer import analyze_image
 
@@ -22,7 +23,6 @@ def clean_json(text):
         return json.loads(text)
 
     except Exception:
-
         return {
             "issue_type": "unknown",
             "object_part": "unknown",
@@ -51,17 +51,17 @@ def process_claim(row):
 
             result = clean_json(result_text)
 
-            result["image_id"] = (
-                image_path
-                .split("/")[-1]
-                .replace(".jpg", "")
-            )
+            # Clean image id extraction
+            result["image_id"] = os.path.splitext(
+                os.path.basename(image_path)
+            )[0]
 
             results.append(result)
 
         except Exception as e:
 
-            print("ERROR:", e)
+            print(f"\nERROR processing {image_path}")
+            print(e)
 
             results.append({
                 "issue_type": "unknown",
@@ -69,7 +69,9 @@ def process_claim(row):
                 "severity": "unknown",
                 "claim_status": "not_enough_information",
                 "valid_image": "False",
-                "image_id": image_path.split("/")[-1].replace(".jpg", "")
+                "image_id": os.path.splitext(
+                    os.path.basename(image_path)
+                )[0]
             })
 
     return results

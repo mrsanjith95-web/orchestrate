@@ -7,22 +7,20 @@ from agents.multi_image_decision import combine_results
 # CHANGE THESE FOR EACH BATCH
 # ----------------------------------
 
-START = 5
-END = 10
-# Batch 1 -> 0,5
-# Batch 2 -> 5,10
-# Batch 3 -> 10,15
-# Batch 4 -> 15,20
-# Batch 5 -> 20,25
-# etc.
+START = 45
+END = 50
 
 # ----------------------------------
 
 claims = pd.read_csv("data/claims.csv")
 
+print(f"Total claims in dataset: {len(claims)}")
+
 output_rows = []
 
 batch_claims = claims.iloc[START:END]
+
+print(f"Claims selected: {len(batch_claims)}")
 
 for index, row in batch_claims.iterrows():
 
@@ -51,18 +49,15 @@ for index, row in batch_claims.iterrows():
         final = combine_results(image_results)
 
         output_rows.append({
-
             "user_id": row["user_id"],
             "image_paths": row["image_paths"],
             "user_claim": row["user_claim"],
             "claim_object": row["claim_object"],
-
             "issue_type": final["issue_type"],
             "object_part": final["object_part"],
             "claim_status": final["claim_status"],
             "severity": final["severity"],
             "supporting_image_ids": final["supporting_image_ids"]
-
         })
 
     except Exception as e:
@@ -82,10 +77,21 @@ for index, row in batch_claims.iterrows():
         })
 
 # ----------------------------------
-# Full Output
+# Create DataFrame
 # ----------------------------------
 
 df = pd.DataFrame(output_rows)
+
+print("\nColumns found:")
+print(df.columns.tolist())
+
+if df.empty:
+    print("\nNo rows processed in this batch.")
+    exit()
+
+# ----------------------------------
+# Save Full Output
+# ----------------------------------
 
 output_file = f"output/output_{START}_{END}.csv"
 
@@ -95,19 +101,26 @@ df.to_csv(
 )
 
 # ----------------------------------
-# Submission Output
+# Save Submission Output
 # ----------------------------------
 
-submission_df = df[
-    [
-        "user_id",
-        "issue_type",
-        "object_part",
-        "claim_status",
-        "severity",
-        "supporting_image_ids"
-    ]
+required_columns = [
+    "user_id",
+    "issue_type",
+    "object_part",
+    "claim_status",
+    "severity",
+    "supporting_image_ids"
 ]
+
+missing = [c for c in required_columns if c not in df.columns]
+
+if missing:
+    print("\nMissing columns:", missing)
+    print("Available columns:", df.columns.tolist())
+    exit()
+
+submission_df = df[required_columns]
 
 submission_file = f"output/submission_{START}_{END}.csv"
 

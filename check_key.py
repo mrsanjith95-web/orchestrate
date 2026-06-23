@@ -8,9 +8,14 @@ client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
-response = client.models.generate_content(
-    model="gemini-2.0-flash",
-    contents="What is AI?"
-)
+try:
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents="What is AI?"
+    )
+    print("SUCCESS")
+    print(response.text[:200])
 
-print(response.text)
+except Exception as e:
+    print("FAILED")
+    print(e)

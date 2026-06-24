@@ -46,14 +46,10 @@ Severity: high
 ## Screenshots
 
 ### Architecture
-![Architecture](<img width="1536" height="1024" alt="Aricheturce" src="https://github.com/user-attachments/assets/ca851fd5-a86c-4fa4-9fef-cd33c993c084" />
-)
-
+![Architecture](Architecture.png)
 
 ### Streamlit Dashboard
-![Dashboard](<img width="959" height="427" alt="DashBoard" src="https://github.com/user-attachments/assets/9e404b58-5fd1-4e52-9550-25acb9eabf58" />
-)
+![Dashboard](Dashboard.png)
 
 ### Result
-![Result](<img width="955" height="422" alt="Result" src="https://github.com/user-attachments/assets/83810ebd-1a0b-45b7-b577-5d3277e3b379" />
-)
+![Result](Result.png)
